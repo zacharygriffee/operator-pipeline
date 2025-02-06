@@ -1,5 +1,4 @@
 import {BehaviorSubject, lastValueFrom, of} from "rxjs";
-import {isRxJSOperator} from "./lib/isRxJSOperator.js";
 
 /**
  * Creates a dynamic operator pipeline.
@@ -63,17 +62,22 @@ const createOperatorPipeline = (initialOperators = []) => {
 
         let currentUpdate = updates;
         for (const { operatorFn } of operators) {
-            if (isRxJSOperator(operatorFn)) {
-                // RxJS Operator: Apply it inside `.pipe()`
+            // only real way to test operator versus function.
+            try {
                 currentUpdate = await lastValueFrom(of(currentUpdate).pipe(operatorFn)) ?? updates;
-            } else {
-                // Regular function: Treat as async and wrap with `Promise.resolve()`
+                continue;
+            } catch {}
+
+            try {
                 currentUpdate = await Promise.resolve(operatorFn(currentUpdate)) ?? updates;
+            } catch (e) {
+                throw new Error(`Operator failed: ${e.message}`);
             }
         }
 
         return currentUpdate;
     };
+
 
     // Initialize with provided operators
     initialOperators.forEach(fn => addOperator(fn, true));

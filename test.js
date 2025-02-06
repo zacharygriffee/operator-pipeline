@@ -1,7 +1,6 @@
 import test from 'brittle';
 import { createOperatorPipeline } from './index.js';
 import { map } from 'rxjs';
-
 /**
  * Helper function to create a simple async operator.
  */
