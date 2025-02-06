@@ -69,7 +69,7 @@ const createOperatorPipeline = (initialOperators = []) => {
     };
 
     // Initialize with provided operators
-    initialOperators.forEach(addOperator);
+    initialOperators.forEach(fn => addOperator(fn, true));
 
     return { addOperator, removeOperator, processUpdates };
 };
