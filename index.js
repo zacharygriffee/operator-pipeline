@@ -65,10 +65,10 @@ const createOperatorPipeline = (initialOperators = []) => {
         for (const { operatorFn } of operators) {
             if (isRxJSOperator(operatorFn)) {
                 // RxJS Operator: Apply it inside `.pipe()`
-                currentUpdate = await lastValueFrom(of(currentUpdate).pipe(operatorFn));
+                currentUpdate = await lastValueFrom(of(currentUpdate).pipe(operatorFn)) ?? updates;
             } else {
                 // Regular function: Treat as async and wrap with `Promise.resolve()`
-                currentUpdate = await Promise.resolve(operatorFn(currentUpdate));
+                currentUpdate = await Promise.resolve(operatorFn(currentUpdate)) ?? updates;
             }
         }
 
