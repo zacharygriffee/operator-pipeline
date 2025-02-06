@@ -1,0 +1,31 @@
+{
+  "name": "operator-pipeline",
+  "version": "1.0.0",
+  "description": "A lightweight RxJS-based dynamic operator pipeline for sequential function processing.",
+  "type": "module",
+  "main": "index.js",
+  "exports": {
+    ".": "./index.js"
+  },
+  "scripts": {
+    "test": "brittle ./test.js",
+    "bare:test": "bare ./test.js"
+  },
+  "dependencies": {
+    "brittle": "^3.10.0",
+    "rxjs": "^7.8.1"
+  },
+  "keywords": [
+    "rxjs",
+    "pipeline",
+    "operator",
+    "functional-programming",
+    "stream-processing"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yourusername/operator-pipeline.git"
+  },
+  "author": "Your Name",
+  "license": "MIT"
+}
