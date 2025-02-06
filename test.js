@@ -1,8 +1,9 @@
 import test from 'brittle';
 import { createOperatorPipeline } from './index.js';
+import { map } from 'rxjs';
 
 /**
- * Helper function to create a simple operator.
+ * Helper function to create a simple async operator.
  */
 const mockOperator = (modifier) => async (data) => ({ ...data, value: data.value + modifier });
 
@@ -55,4 +56,31 @@ test('should allow multiple toggles and apply changes correctly', async (t) => {
 
     const result = await pipeline.processUpdates({ value: 5 });
     t.is(result.value, 15, 'Toggled operator should modify value after re-enabling');
+});
+
+/**
+ * Tests RxJS operator processing.
+ */
+test('should apply RxJS operators correctly', async (t) => {
+    const pipeline = createOperatorPipeline();
+
+    pipeline.addOperator(map(data => ({ ...data, transformed: true })));
+
+    const result = await pipeline.processUpdates({ value: 42 });
+    t.is(result.transformed, true, 'RxJS operator should modify data');
+});
+
+/**
+ * Tests both async functions and RxJS operators in sequence.
+ */
+test('should process both async functions and RxJS operators in order', async (t) => {
+    const pipeline = createOperatorPipeline();
+
+    pipeline.addOperator(async (data) => ({ ...data, step1: true }));
+    pipeline.addOperator(map(data => ({ ...data, step2: true })));
+
+    const result = await pipeline.processUpdates({ value: 1 });
+
+    t.is(result.step1, true, 'Async function should modify data first');
+    t.is(result.step2, true, 'RxJS operator should modify data second');
 });

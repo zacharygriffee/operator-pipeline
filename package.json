@@ -1,6 +1,6 @@
 {
   "name": "operator-pipeline",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "A lightweight RxJS-based dynamic operator pipeline for sequential function processing.",
   "type": "module",
   "main": "index.js",
