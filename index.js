@@ -1,4 +1,5 @@
 import {BehaviorSubject, lastValueFrom, of} from "rxjs";
+import {tryExecute} from "./util/tryExecute.js";
 
 /**
  * Creates a dynamic operator pipeline.
@@ -61,23 +62,24 @@ const createOperatorPipeline = (initialOperators = []) => {
         const operators = operatorsSubject.getValue().filter(op => op.enabled);
 
         let currentUpdate = updates;
-        for (const { operatorFn } of operators) {
-            // only real way to test operator versus function.
-            try {
-                currentUpdate = await lastValueFrom(of(currentUpdate).pipe(operatorFn)) ?? updates;
-                continue;
-            } catch {}
 
+        for (const { operatorFn } of operators) {
             try {
-                currentUpdate = await Promise.resolve(operatorFn(currentUpdate)) ?? updates;
+                const result = tryExecute(() => operatorFn(currentUpdate), () => of(currentUpdate).pipe(operatorFn));
+                if (result && typeof result.subscribe === "function") {
+                    currentUpdate = await lastValueFrom(result) ?? currentUpdate;
+                } else if (result && typeof result.then === "function") {
+                    currentUpdate = await result ?? currentUpdate;
+                } else {
+                    currentUpdate = result ?? currentUpdate; // Preserve the last valid value
+                }
             } catch (e) {
-                throw new Error(`Operator failed: ${e.message}`);
+                throw new Error(`Operator execution failed: ${e.message}`);
             }
         }
 
         return currentUpdate;
     };
-
 
     // Initialize with provided operators
     initialOperators.forEach(fn => addOperator(fn, true));

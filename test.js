@@ -1,4 +1,4 @@
-import test from 'brittle';
+import {test, solo} from 'brittle';
 import { createOperatorPipeline } from './index.js';
 import { map } from 'rxjs';
 /**
@@ -83,3 +83,18 @@ test('should process both async functions and RxJS operators in order', async (t
     t.is(result.step1, true, 'Async function should modify data first');
     t.is(result.step2, true, 'RxJS operator should modify data second');
 });
+
+test('should only execute function once', async (t) => {
+    const pipeline = createOperatorPipeline();
+    let i = 0;
+
+    pipeline.addOperator(async (data) => {
+        i++;
+        return ({...data, what: true});
+    });
+
+    const result = await pipeline.processUpdates({ value: 1 });
+    t.is(result.what, true, 'Operator should modify data');
+    t.is(i, 1, 'Operator should only be executed once');
+});
+
