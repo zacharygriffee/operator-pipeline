@@ -1,18 +1,20 @@
 {
   "name": "operator-pipeline",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "description": "A lightweight RxJS-based dynamic operator pipeline for sequential function processing.",
   "type": "module",
   "main": "index.js",
   "exports": {
-    ".": "./index.js"
+    ".": "./index.js",
+    "./operators": "./lib/operators/index.js"
   },
   "scripts": {
     "test": "brittle ./test.js",
     "bare:test": "bare ./test.js"
   },
   "devDependencies": {
-    "brittle": "^3.10.0"
+    "brittle": "^3.10.0",
+    "dagify": "^1.1.5"
   },
   "dependencies": {
     "rxjs": "^7.8.1"

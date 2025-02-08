@@ -1,5 +1,5 @@
 import {BehaviorSubject, lastValueFrom, of} from "rxjs";
-import {tryExecute} from "./util/tryExecute.js";
+import {tryExecute} from "./lib/util/tryExecute.js";
 
 /**
  * Creates a dynamic operator pipeline.
